@@ -1,0 +1,19 @@
+{
+    "name": "koyabu/dropbox",
+    "description": "Dropbox REST API Library",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Koyabu\\Dropbox\\": "vendor/src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "stievenk",
+            "email": "stieven.kalengkian@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

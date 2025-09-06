@@ -20,7 +20,16 @@ class Init {
 			$d = $this->refreshToken($config['dropbox']['refresh_token']);
 			$this->token = $d['access_token'];
 		}
-		//$this->token = 'sl.BSt1pu4_BUhG9kMNcTnpAVrr0SY_7XayRIbzsHBzvw044mwzPKBcgEhXxPbJBtcK5a5wjQDXoKPgHAGu9uiycghfZL-gKccoBX-vvGoSh929CbZ56JOPtenY2WCi1Kd6lv60GUo';
+	}
+
+	function loadConfig($fileconfig='') {
+		global $config;
+		$fileconfig = $fileconfig ? $fileconfig : 'config.dropbox.json';
+		$cfg = json_decode(file_get_contents($fileconfig),true);
+		$cfg = is_array($cfg) ? $cfg : [];
+		$config = is_array($config) ? array_merge_recursive($config,$cfg) : $cfg;
+		$this->config = $config;
+		return $config;
 	}
 	
 	public function setRefreshToken($token) {
@@ -126,7 +135,16 @@ class Init {
 		$APP_KEY = $config['dropbox']['app_key'];
 		$url = 'https://www.dropbox.com/oauth2/authorize?client_id='.$APP_KEY.'&token_access_type=offline&response_type=code&scope=files.metadata.write files.content.write sharing.write file_requests.write';
 		if ($code == '') {
-			return "Please go to: <a href=\"".$url."\">{$url}</a>";
+			return "<h1>Follow to step</h1>
+			<ol>
+			<li>
+			Please go to: <a href=\"".$url."\" target=\"_blank\">{$url}</a></li>
+			<li>
+			<form method=\"GET\" action=\"". $_SERVER['PHP_SELF']."\">
+				Paste Code here then sumbit <input type=\"text\" name=\"code\"><br>
+				<button type=\"submit\">SUBMIT</button>
+			</form>
+			</li></ol>";
 		} else {
 			$this->init('https://api.dropboxapi.com/oauth2/token');
 			curl_setopt($this->ch, CURLOPT_USERPWD, "{$config['dropbox']['app_key']}:{$config['dropbox']['app_secret']}");
@@ -134,7 +152,13 @@ class Init {
 						'grant_type' => 'authorization_code'
 					);
 			curl_setopt($this->ch, CURLOPT_POSTFIELDS,http_build_query($data));
-			return $this->post();
+			$result = $this->post();
+			$result['app_key'] = $config['dropbox']['app_key'];
+			$result['app_secret'] = $config['dropbox']['app_secret'];
+			file_put_contents('config.dropbox.json',json_encode($result,JSON_PRETTY_PRINT));
+			return '<pre>'.json_encode($result,JSON_PRETTY_PRINT).'</pre>'.
+			'<p>Access Token<br><textarea rows="3" style="width:100%">'.$result['access_token'].'</textarea></p>
+			<p>Refresh Token<br><textarea rows="3" style="width:100%">'.$result['refresh_token'].'</textarea></p>';
 		}
 	}
 

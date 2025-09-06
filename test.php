@@ -3,13 +3,11 @@ require 'vendor/autoload.php';
 
 use Koyabu\Dropbox\Init as DBX;
 
-$config['dropbox']['app_key'] = '';
-$config['dropbox']['app_secret'] = '';
-$config['dropbox']['refresh_token'] = '';
-$config['dropbox']['access_token'] = '';
-$config['dropbox']['home_dir'] = '/';
+$config['dropbox']['app_key'] = ''; //require
+$config['dropbox']['app_secret'] = ''; //require
 
 $DBX = new DBX();
-
-echo $DBX->getAccessToken();
+$DBX->loadConfig();
+$code = $_REQUEST['code'] ? $_REQUEST['code'] : $argv[1];
+echo $DBX->getAccessToken($code);
 ?>

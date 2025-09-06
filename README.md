@@ -7,3 +7,24 @@ PHP Library Dropbox REST API<br>
 ```
 composer require koyabu/dropbox
 ```
+
+## How to use
+```
+<?php
+require 'vendor/autoload.php';
+
+use Koyabu\Dropbox\Init as DBX;
+$config['dropbox']['app_key'] = 'your-app-key';
+$config['dropbox']['app_secret'] = 'your-app-secret';
+$config['dropbox']['refresh_token'] = 'refresh-token';
+$config['dropbox']['access_token'] = 'access-token';
+$config['dropbox']['home_dir'] = '/';
+
+// Initialize Dropbox
+$DBX = new DBX();
+$code = $_REQUEST['code'] ? $_REQUEST['code'] : $argv[1];
+
+// to get access-token and refresh-token
+echo $DBX->getAccessToken($code);
+?>
+```
